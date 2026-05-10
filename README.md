@@ -28,7 +28,7 @@ Lefthook を PC にインストールする。
 brew install lefthook
 ```
 
-さらに本プロジェクトのルートディレクトリにいる状態で以下のコマンドを実行し、Lefthook を初期化してください。
+さらに本プロジェクトのルートディレクトリにいる状態で以下のコマンドを実行し、 Lefthook を初期化してください。
 
 ```shell
 lefthook install
@@ -62,3 +62,32 @@ lefthook install
 | `01-restrict-push-to-default-branch.sh` | デフォルトブランチへの直プッシュを禁止する Git フック |
 
 ※ 上記スクリプトの実行後に、リンター・型チェック・自動テスト・ビルドチェックが実行されます。
+
+## 📖️ 開発ルール
+
+### GitHub Actions の管理
+
+#### 各 GitHub Actions の説明
+
+それぞれの GitHub Actions がどういった機能を果たしているかは、各 GitHub Actions の `.yml` ファイルのファイル冒頭に説明を記載しています。  
+また、以下のドキュメントでも既存の GitHub Actions の概要を一覧することができます。
+
+[docs/repository-structure.md](docs/repository-structure.md#.github/)
+
+#### 使用を許可する GitHub Actions のリストの更新について
+
+このリポジトリでは、GitHub Settings の「Allow or block specified actions and reusable workflows」で使用できるアクションを管理・制限しています（ホワイトリスト方式）。
+
+許可するアクションの一覧は [.github/allowed-github-actions.md](.github/allowed-github-actions.md) に自動生成されます。
+
+**使用する GitHub Actions を追加・変更したとき**は、以下の手順でホワイトリストを更新してください。
+
+1. `.github/workflows/` または `.github/actions/` 以下のファイルを変更して `git commit` を実行する
+2. Lefthook が自動で `.github/allowed-github-actions.md` を更新し、コミットに含める
+    - ただし、この Lefthook（Git フック）は、以下の1つの条件を満たす場合にのみ実行されます
+        1. 開発マシンに GitHub CLI をインストールしていること
+            - `allowed-github-actions.md` を自動更新するスクリプトの中で gh コマンドを使用しています
+            - 以下の公式ドキュメントを参考に、自身の開発マシンに GitHub CLI を導入しておきましょう
+            - [GitHub CLI のドキュメント - GitHub ドキュメント](https://docs.github.com/ja/github-cli)
+3. PR をマージしたあと、[.github/allowed-github-actions.md](.github/allowed-github-actions.md) の内容をリポジトリの Settings > Actions > Actions permissions の中の「Allow enterprise, and select non-enterprise, actions and reusable workflows」選択時の「Allow or block specified actions and reusable workflows」 に貼り付けて「Save」ボタンを押す
+4. 既存の GitHub Actions や変更を加えた GitHub Actions の動作に問題がないことを確認する

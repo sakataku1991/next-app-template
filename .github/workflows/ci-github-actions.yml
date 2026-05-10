@@ -1,0 +1,69 @@
+# GitHub Actions のワークフロー（.ymlファイル）を静的解析するワークフロー
+# 以下の3種類のリンターを実行する
+# - リント（静的解析）エラー箇所の検出
+#   - ツール: actionlint
+#     - 機能: 構文チェック（YAML構文エラー、シェルスクリプトのチェック等）
+#   - ツール: ghalint
+#     - 機能: セキュリティポリシーチェック（permissions 必須化、コミットハッシュ参照の強制等）
+#   - ツール: zizmor
+#     - 機能: セキュリティ監査（過剰な permissions の検出、テンプレートインジェクションの検出等）
+
+name: CI GitHub Actions
+
+# このワークフローをトリガーするイベント
+on:
+  workflow_dispatch:
+  # PRに関するイベント
+  pull_request:
+    # 「ファイルパス」でフィルタリング
+    paths:
+      - ".github/workflows/**.yml"
+      - ".github/actions/**.yml"
+      - "docker/actionlint/**"
+      - "docker/ghalint/**"
+      - "docker/zizmor/**"
+      - "zizmor.yml"
+
+permissions: {}
+
+defaults:
+  run:
+    shell: bash
+
+# とあるPRの中で同じワークフローが複数起動したら、古い方を自動でキャンセルする
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    # タイムアウトの時間がデフォルトで6時間になっているため、これをより短いほどほどの時間に変更（一旦 `5分` で設定）
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    strategy:
+      # どれか一つのタスクがエラーになったとしても、他のタスクの実行をキャンセルせず、続行させる
+      fail-fast: false
+      matrix:
+        # 各タスクを並列実行
+        task: [actionlint, ghalint, zizmor]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Run actionlint
+        if: matrix.task == 'actionlint'
+        uses: ./.github/actions/actionlint
+
+      - name: Run ghalint
+        if: matrix.task == 'ghalint'
+        uses: ./.github/actions/ghalint
+        with:
+          action-path: ./**/action.yml
+
+      - name: Run zizmor
+        if: matrix.task == 'zizmor'
+        uses: ./.github/actions/zizmor
