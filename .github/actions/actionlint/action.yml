@@ -1,0 +1,6 @@
+name: actionlint
+description: GitHub Actions ワークフローの構文チェック
+
+runs:
+  using: docker
+  image: ../../../docker/actionlint/Dockerfile

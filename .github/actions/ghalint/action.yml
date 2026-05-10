@@ -1,0 +1,15 @@
+name: ghalint
+description: GitHub Actions ワークフローのセキュリティポリシーチェック
+
+inputs:
+  action-path:
+    description: |
+      Path to action.yml.
+      This is passed to `ghalint run-action`.
+    required: false
+
+runs:
+  using: docker
+  image: ../../../docker/ghalint/Dockerfile
+  args:
+    - ${{ inputs.action-path }}

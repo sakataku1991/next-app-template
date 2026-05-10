@@ -1,0 +1,18 @@
+name: zizmor
+description: GitHub Actions ワークフローのセキュリティ監査
+
+inputs:
+  github-token:
+    description: The GitHub token to use while auditing
+    required: false
+  persona:
+    description: The persona to use while auditing
+    required: false
+    default: regular
+
+runs:
+  using: docker
+  image: ../../../docker/zizmor/Dockerfile
+  env:
+    ZIZMOR_GITHUB_TOKEN: ${{ inputs.github-token }}
+    ZIZMOR_PERSONA: ${{ inputs.persona }}
