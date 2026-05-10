@@ -11,7 +11,8 @@
   "author": "Takuya Sakamoto <sakataku1991@gmail.com> (https://github.com/sakataku1991)",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "dotenv -e .env -- sh -c 'next dev --hostname ${LOCAL_HOSTNAME:-local.app-name.com} --port ${NEXTJS_PORT:-3000}'",
+    "dev:docker": "dotenv -e .env -- sh -c 'next dev --hostname 0.0.0.0 --port ${NEXTJS_PORT:-3000}'",
     "build": "next build",
     "start": "next start",
     "lint:es": "eslint",
@@ -30,6 +31,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "concurrently": "^9.2.1",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "fixpkg": "^1.0.2",
