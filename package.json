@@ -1,0 +1,28 @@
+{
+  "name": "next-app-template",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Next.jsプロジェクトのテンプレート",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sakataku1991/next-app-template.git"
+  },
+  "license": "MIT",
+  "author": "Takuya Sakamoto <sakataku1991@gmail.com> (https://github.com/sakataku1991)",
+  "type": "module",
+  "scripts": {
+    "lint:pkg:fix": "fixpkg",
+    "lint:secret": "secretlint --secretlintignore .gitignore '**/*'"
+  },
+  "devDependencies": {
+    "@secretlint/secretlint-rule-preset-recommend": "^13.0.0",
+    "concurrently": "^9.2.1",
+    "fixpkg": "^1.0.2",
+    "secretlint": "^13.0.0"
+  },
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "packageManager": "pnpm@10.33.0"
+}
