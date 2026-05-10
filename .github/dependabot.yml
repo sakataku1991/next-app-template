@@ -1,0 +1,47 @@
+version: 2
+updates:
+  # GitHub Actions の依存関係を更新する
+  - package-ecosystem: github-actions
+    directories:
+      - /
+      - /.github/actions/**
+    target-branch: "main"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "10:00"
+      timezone: Asia/Tokyo
+    cooldown:
+      default-days: 7 # 7日（＝1週間）のクールダウン期間を設定
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    labels:
+      - "依存関係"
+      - "GitHub Actions"
+    commit-message:
+      prefix: "GitHub Actions の依存関係の更新: "
+
+  # Node.js (npm) パッケージの依存関係を更新する
+  - package-ecosystem: npm
+    directories:
+      - /
+    target-branch: "main"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "10:01"
+      timezone: Asia/Tokyo
+    cooldown:
+      default-days: 7 # 7日（＝1週間）のクールダウン期間を設定
+    open-pull-requests-limit: 7
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    labels:
+      - "依存関係"
+      - "npm"
+    commit-message:
+      prefix: "Node.js (npm) の依存関係の更新: "
