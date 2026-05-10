@@ -11,14 +11,33 @@
   "author": "Takuya Sakamoto <sakataku1991@gmail.com> (https://github.com/sakataku1991)",
   "type": "module",
   "scripts": {
+    "dev": "dotenv -e .env -- sh -c 'next dev --hostname ${LOCAL_HOSTNAME:-local.app-name.com} --port ${NEXTJS_PORT:-3000}'",
+    "dev:docker": "dotenv -e .env -- sh -c 'next dev --hostname 0.0.0.0 --port ${NEXTJS_PORT:-3000}'",
+    "build": "next build",
+    "start": "next start",
+    "lint:es": "eslint",
     "lint:pkg:fix": "fixpkg",
     "lint:secret": "secretlint --secretlintignore .gitignore '**/*'"
   },
+  "dependencies": {
+    "next": "16.2.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
   "devDependencies": {
     "@secretlint/secretlint-rule-preset-recommend": "^13.0.0",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "concurrently": "^9.2.1",
+    "dotenv-cli": "^11.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.4",
     "fixpkg": "^1.0.2",
-    "secretlint": "^13.0.0"
+    "secretlint": "^13.0.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   },
   "engines": {
     "node": ">=24.0.0",

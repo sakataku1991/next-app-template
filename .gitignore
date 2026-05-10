@@ -11,7 +11,6 @@
 # Next.js
 /.next/
 /out/
-next-env.d.ts
 
 # production
 /build/
@@ -19,7 +18,6 @@ next-env.d.ts
 # misc
 .DS_Store
 *.pem
-/certificates/
 
 # IDE files
 /.vscode/
@@ -27,14 +25,15 @@ next-env.d.ts
 
 # debug
 **/npm-debug.log*
+.pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example
 
-# cache
+# TypeScript
 *.tsbuildinfo
-/.turbo/
+next-env.d.ts
 
 # Storybook
 *storybook.log
