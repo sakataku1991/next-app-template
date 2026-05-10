@@ -28,7 +28,7 @@ Lefthook を PC にインストールする。
 brew install lefthook
 ```
 
-さらに `choice-polaris` ディレクトリにいる状態で以下のコマンドを実行し、 Lefthook を初期化してください。
+さらに本プロジェクトのルートディレクトリにいる状態で以下のコマンドを実行し、Lefthook を初期化してください。
 
 ```shell
 lefthook install
