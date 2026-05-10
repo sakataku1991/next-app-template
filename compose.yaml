@@ -1,0 +1,38 @@
+name: app-name
+
+services:
+  next-app:
+    build:
+      context: .
+      dockerfile: ./docker/next-app/Dockerfile
+      target: local
+    container_name: next-app
+    env_file:
+      - .env
+    ports:
+      - '127.0.0.1:${NEXTJS_PORT:-3000}:${NEXTJS_PORT:-3000}'
+    networks:
+      - app_name_network
+    extra_hosts:
+      - "${LOCAL_HOSTNAME:-local.app-name.com}:host-gateway"
+    restart: always
+    develop:
+      watch:
+        - action: sync
+          path: ./
+          target: /app
+          ignore:
+            - .claude/
+            - .github/
+            - .lefthook
+            - .next/
+            - coverage/
+            - docs/
+            - node_modules/
+            - storybook-static/
+        - action: rebuild
+          path: ./package.json
+
+networks:
+  app_name_network:
+    external: true
