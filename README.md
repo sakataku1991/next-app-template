@@ -2,6 +2,159 @@
 
 Next.js アプリのテンプレートリポジトリです。
 
+
+## 🧑‍💻 ローカル開発環境の構築手順
+
+### 1. リポジトリの取得
+
+自身の PC の 作業ディレクトリに `app-name` リポジトリを Clone する。
+
+```shell
+git clone https://github.com/sakataku1991/app-name.git
+```
+
+もしくは
+
+```shell
+git clone -c core.autocrlf=input git@github:sakataku1991/app-name.git
+```
+
+### 2. 環境変数の設定
+
+`.env.example` をコピーして `.env` を作成する。
+
+※ 作成された `.env` に記載されているコメントを参照しながら、必要な環境変数を設定してください。
+
+### 3. Docker ネットワークの作成
+
+開発環境用の Docker ネットワークを作成する。
+
+```shell
+docker network create app_name_network
+```
+
+### 4. ローカル環境でのホスト名の設定
+
+ローカル開発環境のデフォルトのホスト名 `localhost` を `local.app-name.com` に変更する。
+
+#### 4.1 `hosts` ファイルの設定
+
+`/etc/hosts` ファイルにローカル開発環境用のドメインを追加する。
+
+```shell
+sudo vim /etc/hosts
+```
+
+※ `Password` の入力を求められた場合は、ご自身の PC 自体のログインパスワードを入力してください。
+
+`/etc/hosts` ファイルに以下のコードを追加。
+
+```hosts
+127.0.0.1 local.app-name.com
+```
+
+### 5. 依存関係のインストール
+
+Node.js パッケージのインストール前にプロジェクトルートの Node.js のバージョンを確認する。
+
+```shell
+node -v
+```
+
+> [!IMPORTANT]
+> 本プロジェクトは Node.js のバージョン `v24.14.1` を前提としています。
+> そのため次のステップの `npm ci` がうまくいかない場合は [Volta](https://github.com/volta-cli/volta) や [nodenv](https://github.com/nodenv/nodenv) などのバージョン管理ツールを使用し、プロジェクトルートの Node.js のバージョンを上記のバージョンに合わせてください。
+
+以下のコマンドで Node.js パッケージをインストールする。
+
+```shell
+pnpm i --frozen-lockfile
+```
+
+### 6. Docker イメージの作成
+
+開発環境用の Docker イメージをビルドする。
+
+```shell
+docker compose build
+```
+
+### 7. Docker コンテナの起動
+
+ビルドした Docker イメージを元に Docker コンテナを起動する。
+
+```shell
+docker compose up --watch
+```
+
+### 8. Next.js アプリの動作確認
+
+[http://local.app-name.com:3000/](http://local.app-name.com:3000/)
+
+ブラウザで上記の URL にアクセスし、 Docker 開発環境上で Next.js アプリが動いていることを確認する。
+
+### 9. Next.js アプリの停止
+
+Next.js アプリを停止させるには、まず、 Docker の実行ログが表示されているターミナルで以下のいずれかのショートカットキーを実行する。
+
+Windows の場合: `Ctrl + C`
+
+Mac の場合: `⌃ control + C`
+
+さらにターミナルで以下のコマンドを実行し、 Docker コンテナを削除する。
+
+```shell
+docker compose down
+```
+
+
+## 🔨 開発時に実行する必要のあるコマンド
+
+### 1. 依存関係のアップデート
+
+必要に応じて Node.js パッケージを更新する。
+
+```shell
+pnpm i --frozen-lockfile
+```
+
+### 2. 環境変数（ `.env` ）のアップデート
+
+環境変数（ `.env` ）の更新があるかどうかも定期的に確認しましょう。
+
+[.env.example](.env.example) の内容を確認し、環境変数の追加や変更があれば Docker コンテナの起動前にローカルの `.env` を更新してください。
+
+### 3. Docker コンテナの起動
+
+Docker イメージをビルドし、同時に Docker コンテナを起動する。
+
+```shell
+docker compose up --build --watch
+```
+
+### 4. 開発作業...
+
+#### Next.js アプリ
+
+[http://local.app-name.com:3000/](http://local.app-name.com:3000/)
+
+ブラウザで上記の URL にアクセスし、開発作業を進める。
+
+### 5. Next.js アプリの停止
+
+Next.js アプリを停止させるには、まず、 Docker の実行ログが表示されているターミナルで以下のいずれかのショートカットキーを実行する。
+
+Windows の場合: `Ctrl + C`
+
+Mac の場合: `⌃ control + C`
+
+さらにターミナルで以下のコマンドを実行し、 Docker コンテナを削除する。
+
+```shell
+docker compose down
+```
+
+
 ## 🤜 設定している Git フック
 
 > [!IMPORTANT]
@@ -62,6 +215,7 @@ lefthook install
 | `01-restrict-push-to-default-branch.sh` | デフォルトブランチへの直プッシュを禁止する Git フック |
 
 ※ 上記スクリプトの実行後に、リンター・型チェック・自動テスト・ビルドチェックが実行されます。
+
 
 ## 📖️ 開発ルール
 
