@@ -1,0 +1,58 @@
+# PRが作成されたとき、そのPRの作成者をAssigneesとして自動的に設定・アサインするワークフロー
+
+name: Auto Assign PR Assignees
+
+# このワークフローをトリガーするイベント
+on:
+  workflow_dispatch:
+  # PRに関するイベント
+  pull_request:
+    # 「状態」でフィルタリング
+    # opened:           PRが新たに作成されたとき
+    # ready_for_review: PRの状態がDraftからOpenに変更されたとき
+    # reopened:         一度CloseされたPRがOpenに変更されたとき
+    types: [opened, ready_for_review, reopened]
+
+permissions: {}
+
+defaults:
+  run:
+    shell: bash
+
+# とあるPRの中で同じワークフローが複数起動したら、古い方を自動でキャンセルする
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  assign-author:
+    # 以下の条件のすべてに合致する場合にのみ、このジョブを実行する
+    # - PRの作成者が人間（＝Dependabotなどのbotではなく）のとき
+    # - PRのAssigneesがまだ設定されていないとき
+    if: >-
+      ${{
+        github.actor != 'dependabot[bot]' &&
+        github.event.pull_request.assignee == null
+      }}
+    runs-on: ubuntu-latest
+    # タイムアウトの時間がデフォルトで6時間になっているため、これをより短いほどほどの時間に変更（一旦 `5分` で設定）
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write
+      repository-projects: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Auto assign
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.number }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          set -x
+          gh pr edit "$PR_NUMBER" --add-assignee "$ACTOR"
