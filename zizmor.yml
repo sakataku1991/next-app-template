@@ -1,0 +1,6 @@
+rules:
+  cache-poisoning:
+    ignore:
+      # Storybook デプロイは内部用途のため、 cache-poisoning のリスクは無視できるものとする
+      # キャッシュ機能は生かし、 CI 実行時間の短縮とコスト削減を優先する
+      - deploy-storybook.yml
