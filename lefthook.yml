@@ -20,6 +20,9 @@ pre-push:
     # デフォルトブランチへの直プッシュを禁止する Git フック
     01-restrict-push-to-default-branch.sh:
       runner: bash
+  jobs:
+    - name: Scan Secrets
+      run: pnpm lint:secret
 
 # `git checkout` の実行後に以下の処理を実行する
 post-checkout:
