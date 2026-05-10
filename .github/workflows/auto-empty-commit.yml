@@ -1,0 +1,43 @@
+# 新規ブランチ作成時に空コミットを自動生成するワークフロー
+
+name: Auto Empty Commit
+
+# このワークフローをトリガーするイベント
+on:
+  create:
+
+permissions: {}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  empty-commit:
+    # 以下の条件のすべてに合致する場合にのみ、このジョブを実行する
+    # - ブランチが作成されたとき
+    # - ブランチ名が「feature/」から始まるとき
+    if: >-
+      ${{
+        github.ref_type == 'branch' && startsWith(github.ref_name, 'feature/')
+      }}
+    runs-on: ubuntu-latest
+    # タイムアウトの時間がデフォルトで6時間になっているため、これをより短いほどほどの時間に変更（一旦 `5分` で設定）
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Create an empty commit if not exists
+        env:
+          GIT_REF: ${{ github.ref }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          .github/scripts/empty-commit.sh
+          git push origin HEAD:"$GIT_REF"

@@ -1,0 +1,36 @@
+# `git commit` の実行前に以下の処理を実行する
+# 以下の処理のうち、いずれか1つでもエラーが出た場合は `git commit` を中止する
+pre-commit:
+  scripts:
+    # デフォルトブランチへの直コミットを禁止する Git フック
+    01-restrict-commit-to-default-branch.sh:
+      runner: bash
+  commands:
+    # GitHub Actions 関連のコード変更があった場合に、使用を許可するアクションのホワイトリストを自動更新する Git フック
+    02-update-allowed-github-actions:
+      glob: "{.github/workflows/*.yml,.github/actions/**/*.yml}"
+      run: bash .lefthook/pre-commit/02-update-allowed-github-actions.sh
+      stage_fixed: true
+
+# `git push` の実行前に以下の処理を実行する
+# 以下の処理のうち、いずれか1つでもエラーが出た場合は `git push` を中止する
+pre-push:
+  parallel: false
+  scripts:
+    # デフォルトブランチへの直プッシュを禁止する Git フック
+    01-restrict-push-to-default-branch.sh:
+      runner: bash
+
+# `git checkout` の実行後に以下の処理を実行する
+post-checkout:
+  parallel: false
+  scripts:
+    # 最新のデフォルトブランチをローカルに自動で pull する Git フック
+    01-pull-on-default-branch.sh:
+      runner: bash
+    # リモートで既に merge 済み、もしくは、 close 済みの作業ブランチがローカルに残っていた場合、それを自動削除する Git フック
+    02-cleanup-stale-branches.sh:
+      runner: bash
+    # 新しい作業ブランチの作成時に空コミットを自動生成する Git フック
+    03-auto-empty-commit.sh:
+      runner: bash
